@@ -2,7 +2,7 @@ package cop5556fa19.AST;
 
 import java.util.List;
 
-import scanner.Token;
+import cop5556fa19.Token;
 
 public class Block extends Stat {
 
@@ -11,6 +11,7 @@ public class Block extends Stat {
 	public Block(Token firstToken, List<Stat> stats) {
 		super(firstToken);
 		this.stats = stats;
+		
 	}
 
 	@Override

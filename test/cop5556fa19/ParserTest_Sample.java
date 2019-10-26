@@ -39,10 +39,10 @@ import cop5556fa19.AST.StatBreak;
 import cop5556fa19.AST.StatDo;
 import cop5556fa19.AST.StatGoto;
 import cop5556fa19.AST.StatLabel;
-import scanner.Scanner;
-import scanner.Token;
+import cop5556fa19.Scanner;
+import cop5556fa19.Token;
 
-import static scanner.Token.Kind.*;
+import static cop5556fa19.Token.Kind.*;
 
 class ParserTest_Sample {
 
@@ -123,6 +123,44 @@ class ParserTest_Sample {
 	}
 	
 	@Test
+	void dogoto() throws Exception {
+		String input = "do  goto abc end";
+		Block b = parseBlockAndShow(input);
+		System.out.print(b);
+	}
+	
+	@Test
+	void whiledo() throws Exception {
+		String input = "while x+y do  goto abc end";
+		Block b = parseBlockAndShow(input);
+		System.out.print(b);
+	}
+	
+	@Test
+	void repeat() throws Exception {
+		String input = "repeat  goto abc  until x+y+z";
+		Block b = parseBlockAndShow(input);
+		System.out.print(b);
+	}
+	
+	@Test
+	void forassign() throws Exception {
+		String input = "for k = x+y,x+y-z do while a+fg do goto abc end end";
+		Block b = parseBlockAndShow(input);
+		System.out.print(b);
+	}
+	
+	@Test
+	void forlist() throws Exception {
+		String input = "for a,b,c in x+y, f,g,h,{3,a} do goto abc end";
+		Block b = parseBlockAndShow(input);
+		System.out.print(b);
+	}
+	
+	
+	
+	
+	@Test
 	void testAssignChunk1() throws Exception {
 		String input = "a=b";
 		ASTNode c = parseAndShow(input);		
@@ -201,8 +239,32 @@ class ParserTest_Sample {
 		Block expected = Expressions.makeBlock(s);
 		assertEquals(expected,bl);
 	}
-	
-
+	@Test
+	void Testzero() throws Exception {
+		String input = "l=f(0)";
+		Block bl = parseBlockAndShow(input);
+	}
+	@Test
+	void testSquare() throws Exception{
+		String input = "a[b]= g(k,l)[x.y]";
+		ASTNode c = parseAndShow(input);
+		Exp a = Expressions.makeExpName("a");
+		Exp b = Expressions.makeExpName("b");
+		Exp  result = Expressions.makeExpTableLookup(a, b);
+		ExpName g = Expressions.makeExpName("g");
+		ExpName k = Expressions.makeExpName("k");
+		ExpName l = Expressions.makeExpName("l");
+		ExpName x = Expressions.makeExpName("x");
+		ExpString y = Expressions.makeExpString("y");
+		List<Exp> args = Expressions.makeExpList(k,l);
+		Exp function = Expressions.makeExpFunCall(g, args, null);
+		Exp key = Expressions.makeExpTableLookup(x, y);
+		Exp gtable = Expressions.makeExpTableLookup(function,key);
+		Stat s0 = Expressions.makeStatAssign(result, gtable);
+		Block expectedBlock = Expressions.makeBlock(s0);
+		Chunk expectedChunk = new Chunk(expectedBlock.firstToken,expectedBlock);
+		assertEquals(expectedChunk,c);
+	}
 	
 	@Test
 	void testmultistatements6() throws Exception {
